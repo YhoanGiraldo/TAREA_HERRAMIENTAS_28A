@@ -1,109 +1,170 @@
-using System.Windows.Forms;
+using CapaNegocio;
 
-namespace TAREA_25A_HERRAMIENTAS_3
+namespace CapaPresentacion
 {
-    public partial class frmPrincipal : Form
+    public partial class Form1 : Form
     {
-        public frmPrincipal()
+
+        BLLUsuario objetoCN = new BLLUsuario();
+        private int id = 0;
+        private bool Editar = false;
+        public Form1()
         {
             InitializeComponent();
         }
 
-        private void salirToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ViewAllUsuario()
+        {
+
+            BLLUsuario objeto = new BLLUsuario();
+            dataGridView1.DataSource = objeto.View();
+        }
+
+        private void ClearControls()
+        {
+            txtContrasena.Clear();
+            txtIntentos.Clear();
+            txtNivelSeg.Clear();
+            txtFechaReg.Clear();
+            txtUsuario.Clear();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            ViewAllUsuario();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox5_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnEditar_Click_1(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                Editar = true;
+                txtUsuario.Text = dataGridView1.CurrentRow.Cells["usuario"].Value.ToString();
+                txtContrasena.Text = dataGridView1.CurrentRow.Cells["contrasena"].Value.ToString();
+                txtIntentos.Text = dataGridView1.CurrentRow.Cells["intentos"].Value.ToString();
+                txtNivelSeg.Text = dataGridView1.CurrentRow.Cells["nivelSeg"].Value.ToString();
+                txtFechaReg.Text = dataGridView1.CurrentRow.Cells["fechaReg"].Value.ToString();
+                id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
+            }
+            else
+                MessageBox.Show("Debe seleccionar un resgistro en el DataGridView");
+
+        }
+
+        private void btnGuardar_Click_1(object sender, EventArgs e)
+        {
+            if (Editar == false)
+            {
+                try
+                {
+                    //Validación de controles
+
+                    if (txtUsuario.Text == "")
+                    {
+                        MessageBox.Show("Falta Ingresar el Usuario", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        txtUsuario.Focus();
+                        return;
+                    }
+                    if (txtContrasena.Text == "")
+                    {
+                        MessageBox.Show("Falta Ingresar la Contraseña", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        txtContrasena.Focus();
+                        return;
+                    }
+                    if (txtIntentos.Text == "")
+                    {
+                        MessageBox.Show("Falta Ingresar el Nro de Intentos", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        txtIntentos.Focus();
+                        return;
+                    }
+                    if (txtNivelSeg.Text == "")
+                    {
+                        MessageBox.Show("Falta Ingresar el Nivel de Seguridad", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        txtNivelSeg.Focus();
+                        return;
+                    }
+                    if (txtFechaReg.Text == "")
+                    {
+                        MessageBox.Show("Falta Ingresar la Fecha de Registro", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        txtFechaReg.Focus();
+                        return;
+                    }
+
+                    objetoCN.Create(txtUsuario.Text, txtContrasena.Text, Convert.ToInt32(txtIntentos.Text), Convert.ToDouble(txtNivelSeg.Text), Convert.ToDateTime(txtFechaReg.Text));
+                    MessageBox.Show("Se guardo correctamente");
+                    ViewAllUsuario();
+                    ClearControls();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("No se pudo insertar los datos, se encontro el siguiente error : " + ex);
+                }
+            }
+
+            if (Editar == true)
+            {
+
+                try
+                {
+                    objetoCN.Update(txtUsuario.Text, txtContrasena.Text, Convert.ToInt32(txtIntentos.Text), Convert.ToDouble(txtNivelSeg.Text), Convert.ToDateTime(txtFechaReg.Text), id);
+                    MessageBox.Show("Registro actualizado correctamente");
+                    ViewAllUsuario();
+                    ClearControls();
+                    Editar = false;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("No se pudo insertar los datos, se encontro el siguiente error : " + ex);
+                }
+            }
+
+        }
+
+        private void btnEliminar_Click_1(object sender, EventArgs e)
+        {
+
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
+                objetoCN.Delete(id);
+                MessageBox.Show("Registro eliminado correctamente");
+                ViewAllUsuario();
+            }
+            else
+                MessageBox.Show("Debe seleccionar un resgistro en el DataGridView");
+
+        }
+
+        private void btnSalir_Click(object sender, EventArgs e)
         {
             Application.Exit();
-        }
-
-        private void clientesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmClientes newMDIChild = new frmClientes();
-            newMDIChild.MdiParent = this;
-            newMDIChild.Show();
-        }
-
-        private void productosToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmProductos newMDIChild = new frmProductos();
-            newMDIChild.MdiParent = this;
-            newMDIChild.Show();
-
-        }
-
-        private void categoriasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmCategoriasProductos newMDIChild = new frmCategoriasProductos();
-            newMDIChild.MdiParent = this;
-            newMDIChild.Show();
-        }
-
-        private void facturasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmFacturas newMDIChild = new frmFacturas();
-            newMDIChild.MdiParent = this;
-            newMDIChild.Show();
-        }
-
-        private void informesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmInformes newMDIChild = new frmInformes();
-            newMDIChild.MdiParent = this;
-            newMDIChild.Show();
-        }
-
-        private void empleadosToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmEmpleados newMDIChild = new frmEmpleados();
-            newMDIChild.MdiParent = this;
-            newMDIChild.Show();
-        }
-
-        private void rolesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmRolEmpleados newMDIChild = new frmRolEmpleados();
-            newMDIChild.MdiParent = this;
-            newMDIChild.Show();
-        }
-
-        private void seguridadToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            frmAdminSeguridad newMDIChild = new frmAdminSeguridad();
-            newMDIChild.MdiParent = this;
-            newMDIChild.Show();
-        }
-
-        private void progressBar1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private async void frmPrincipal_Load(object sender, EventArgs e)
-        {
-            await webViewPrincipal.EnsureCoreWebView2Async(null);
-
-            webViewPrincipal.CoreWebView2.Navigate("https://www.google.com");
-
-            webViewPrincipal.Visible = false;
-            panelPrincipal.Visible = false;
-
-
-        }
-
-        private void webView21_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ayudaToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            webViewPrincipal.Visible = true;
-            panelPrincipal.Visible = false;
-
-        }
-
-        private void acercaDeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            webViewPrincipal.Visible = false;
-            panelPrincipal.Visible = true;
         }
     }
 }
